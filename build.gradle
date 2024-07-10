@@ -112,6 +112,19 @@ configure(subprojects.findAll { it.name.startsWith('gen.antlr4') }) {
     }
 }
 
+configure(subprojects.find {it.name.contains("jvm-bytecode")}) {
+    compileJava {
+        sourceCompatibility = JavaVersion.VERSION_22
+        targetCompatibility = JavaVersion.VERSION_22
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.compilerArgs += "--enable-preview"
+    }
+
+    tasks.withType(Javadoc).all { enabled = false }
+}
+
 def jacocoProjectsNames = ['core', 'gen.jdt', 'gen.c', 'gen.ruby', 'gen.js', 'gen.srcml', 'gen.css']
 def jacocoProjects = subprojects.findAll { it.name in jacocoProjectsNames }
 configure(jacocoProjects) {
@@ -161,6 +174,7 @@ def projectDescriptions = [
     'gen.css': 'GumTree tree generator for CSS code based on ph-css.',
     'gen.javaparser': 'GumTree tree generator for Java code (JavaParser based).',
     'gen.jdt': 'GumTree tree generator for Java code (Eclipse JDT based).',
+    'gen.jvm-bytecode': 'GumTree tree generator for JVM bytecode (Class Model based).',
     'gen.js': 'GumTree tree generator for JavaScript code (Rhino based).',
     'gen.js-acorn': 'GumTree tree generator for JS. Requires jsparser.',
     'gen.python': 'GumTree tree generator for Python. Requires pythonparser.',
